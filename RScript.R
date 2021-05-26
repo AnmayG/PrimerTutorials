@@ -9,4 +9,4 @@ p <- ggplot(gapminder %>% filter(continent != "Oceania"), aes(gdpPercap, lifeExp
      labs(title = 'Year: {frame_time}', subtitle = 'Life Expectancy and GDP per Capita (1952-2007)', x = 'GDP per capita', y = 'life expectancy') +
      transition_time(year) +
      ease_aes('linear')
-anim_save("CoolGIF2.gif")
+animate(p, renderer = gifski_renderer())
