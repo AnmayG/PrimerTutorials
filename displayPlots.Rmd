@@ -1,0 +1,10 @@
+---
+title: "displayPlots"
+author: "Anmay Gupta"
+date: "5/25/2021"
+output: html_document
+---
+
+```{r, echo=FALSE}
+knitr::include_graphics("enos_trains.jpg")
+```
