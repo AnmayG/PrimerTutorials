@@ -1,5 +1,12 @@
-library(tidyverse, fivethirtyeight, dplyr)
-library(primer.data, lubridate, janitor, skimr, nycflights13, gapminder)
+library(tidyverse)
+library(primer.data)
+library(lubridate)
+library(janitor)
+library(skimr)
+library(nycflights13)
+library(gapminder)
+library(fivethirtyeight)
+library(plotly)
 tibble(a = 2.1, b = "Hello", c = TRUE, d = 9L)
 tibble('54abc' = 1, 'my var' = 2, c = 3)
 tribble(
@@ -71,5 +78,86 @@ class(gapminder$continent)
 gapminder %>% count(continent)
 fct_count(gapminder$continent)
 
+#Gets the number of countries in gapminder
+nlevels(gapminder$country)
 
+#Filters out the countries Egypt, Haiti, Romania, Thailand , and Venezuela
+h_gap <- gapminder %>% filter(country %in% c("Egypt", "Haiti", "Romania", 
+                                            "Thailand", "Venezuela"))
+nlevels(h_gap$country)
 
+#There are a bunch of unused levels so we drop those by doing this:
+h_gap$country %>% fct_drop() %>% levels()
+
+#Factor levels are normally alphabetical but you can sort them
+gapminder$continent %>% levels()
+gapminder$continent %>% fct_infreq() %>% levels()
+gapminder$continent %>% fct_infreq() %>% fct_rev() %>% levels()
+
+#Make a bar plot that shows the continent and number of entries in a bar plot
+gapminder %>% 
+  mutate(continent = fct_infreq(continent)) %>% #Sort continent by frequency 
+  mutate(continent = fct_rev(continent)) %>%  #Most frequent continent first
+  ggplot(aes(x = continent)) + #Create a new plot with the x being the continent
+  geom_bar() + #Make it a bar plot
+  coord_flip() #Flip the coordinates so it turns sideways
+
+ggplotly(gapminder %>% 
+  mutate(continent = fct_infreq(continent)) %>% #Sort continent by frequency 
+  ggplot(aes(x = continent)) + #Create a new plot with the x being the continent
+  geom_bar() + #Make it a bar plot
+  coord_flip() #Flip the coordinates so it turns sideways
+)
+
+#You can also order country by another variable
+fct_reorder(gapminder$country, gapminder$lifeExp) %>% #Sorts the countries least to highest by median life expectancy
+  levels() %>% #Gets the country names by looking at the country factor
+  head(n = 6L) #Only shows the first {parameter} country names
+
+#It defaults to median, but you can do it with min
+fct_reorder(gapminder$country, gapminder$lifeExp, min) %>% #Sorts the countries least to highest by min life expectancy
+  levels() %>% #Gets the country names by looking at the country factor
+  head(n = 6L) #Only shows the first {parameter} country names
+
+#Or backwards as well
+fct_reorder(gapminder$country, gapminder$lifeExp, .desc = TRUE) %>% #Sorts the countries highest to least by median life expectancy
+  levels() %>% #Gets the country names by looking at the country factor
+  head(n = 6L) #Only shows the first {parameter} country names
+
+#Here's a demo as to why you want to sort your factors
+#This one is sorted alphabetically
+gapminder %>% 
+  filter(year == 2007, continent == "Americas") %>% #Filter so only 2007 data from the Americas is graphed
+  ggplot(aes(x = lifeExp, y = country)) + #new plot with life expectancy as x and country as y
+  geom_point() #Scatter plot
+#This one is sorted by life expectancy
+gapminder %>%
+  filter(year == 2007, continent == "Americas") %>% #Filter so only 2007 data from the Americas is graphed
+  ggplot(aes(x=lifeExp, #new plot with life expectancy as x and country as y
+             y = fct_reorder(country, lifeExp))) + #Countries are sorted by median life expectancy in 2007
+  geom_point() #Scatter plot
+
+#You can also rename factors and their levels
+i_gap <- gapminder %>% #Store this list into the i_gap variable
+  filter(country %in% c('United States', 'Sweden', 'Australia')) %>% #filter so only US, Sweden, and Australia data shows
+  droplevels() #Drop everything else
+i_gap$country %>% levels() #display the possible values of country
+i_gap$country %>% 
+  fct_recode("USA" = "United States", "Oz" = "Australia") %>% #Rename the factors to USA and Oz
+  levels() #display the possible values of country
+
+#You can also grow factors to combine their possible values
+df1 <- gapminder %>%
+  filter(country %in% c("United States", "Mexico"), year > 2000) %>% #Filter so only US and Mexico data from 2000+ is displayed
+  droplevels() #Drop all of the other possible values
+df2 <- gapminder %>%
+  filter(country %in% c("France", "Germany"), year > 2000) %>% #Filter so only France and Germany data from 2000+ is displayed
+  droplevels() #Drop all of the other possible values
+
+#The country factors in these two tibbles have different levels/possible values
+levels(df1$country)
+levels(df2$country)
+
+#In order to combine them, you can't use the c() and have to use fct_c()
+c(df1$country, df2$country)
+fct_c(df1$country, df2$country)
