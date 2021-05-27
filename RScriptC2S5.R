@@ -50,22 +50,3 @@ OlsonNames() #See all timezones
 (x1 <- ymd_hms("2015-06-01 12:00:00", tz = "America/New_York"))
 (x2 <- ymd_hms("2015-06-01 18:00:00", tz = "Europe/Copenhagen"))
 (x3 <- ymd_hms("2014-06-02 04:00:00", tz = "Pacific/Auckland"))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
