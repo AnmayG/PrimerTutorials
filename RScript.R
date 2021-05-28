@@ -1,5 +1,6 @@
 library(gapminder)
 library(ggplot2)
+library(gganimate)
 library(tidyverse)
 p <- ggplot(gapminder %>% filter(continent != "Oceania"), aes(gdpPercap, lifeExp, colour = continent)) +
      geom_point(alpha = 0.7, show.legend = FALSE) +
