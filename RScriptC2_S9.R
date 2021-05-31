@@ -8,7 +8,7 @@ m %>% as_tibble() #turns it into a tibble but have to include x
   2,   3,  5,
   4,  NA,  8,
   NA,  7,  9,
-))
+))  
 
 tbl %>% summarize(avg_a = mean(a)) #NA values can make it bad
 tbl %>% summarize(avg_a = mean(a, na.rm = TRUE)) #Can ignore NA values though
